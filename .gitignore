@@ -1,0 +1,13 @@
+# Editor
+.idea/
+.vscode
+
+# Python env
+venv/
+*.pyc
+
+.env
+
+# Media and static content
+media/
+static/
