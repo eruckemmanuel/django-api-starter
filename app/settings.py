@@ -39,7 +39,13 @@ INSTALLED_APPS = [
 
     # Custom apps
     'common',
+    'account',
 ]
+
+
+# AUTH MODEL
+AUTH_USER_MODEL = 'account.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -166,8 +172,6 @@ CHANNEL_LAYERS = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_HEADERS = list(default_headers) + [
-    'content-range',
-]
+CORS_ALLOW_HEADERS = list(default_headers) + []
 
 
