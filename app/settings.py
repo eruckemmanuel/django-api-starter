@@ -1,8 +1,6 @@
 """
 Django settings for app project.
-
 """
-
 from pathlib import Path
 import os
 from corsheaders.defaults import default_headers
@@ -36,12 +34,16 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'oauth2_provider',
+]
 
-    # Custom apps
+# Custom apps
+CUSTOM_APPS = [
     'common',
     'account',
 ]
 
+# Combine custom apps with installed apps
+INSTALLED_APPS += CUSTOM_APPS
 
 # AUTH MODEL
 AUTH_USER_MODEL = 'account.User'
@@ -104,7 +106,7 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        'oauth2_provider.contrib.rest_framework.permissions.TokenHasReadWriteScope',
+        # 'oauth2_provider.contrib.rest_framework.permissions.TokenHasReadWriteScope',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
