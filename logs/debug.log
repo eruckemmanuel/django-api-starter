@@ -1,0 +1,27 @@
+Watching for file changes with StatReloader
+[mHTTP GET / 200 [0.01, 127.0.0.1:49920][0m
+/home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650105759.764789-d4524cd3-dc8e-4757-9b5e-b9582cbc81e5] INFO 2022-04-16 10:42:39,764 autoreload Watching for file changes with StatReloader
+[cid: 1650105787.695388-87245d3f-a052-4d61-843b-c735fb0f9e34] INFO 2022-04-16 10:43:07,695 runserver [mHTTP GET / 200 [0.02, 127.0.0.1:49940][0m
+[cid: 1650105759.764789-d4524cd3-dc8e-4757-9b5e-b9582cbc81e5] INFO 2022-04-16 10:46:10,659 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650105971.5241582-3993145c-d8a2-4b1f-bbdf-9feff1365af8] INFO 2022-04-16 10:46:11,524 autoreload Watching for file changes with StatReloader
+[cid: 1650105971.5241582-3993145c-d8a2-4b1f-bbdf-9feff1365af8] INFO 2022-04-16 10:46:27,275 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650105988.1564124-56c455d5-7f80-46be-9de4-cedbaa46f526] INFO 2022-04-16 10:46:28,156 autoreload Watching for file changes with StatReloader
+[cid: 1650105988.1564124-56c455d5-7f80-46be-9de4-cedbaa46f526] INFO 2022-04-16 10:46:39,825 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650106000.747366-bebd38fe-58c8-42f1-854a-ecd29ac29c9f] INFO 2022-04-16 10:46:40,747 autoreload Watching for file changes with StatReloader
+[cid: 1650106000.747366-bebd38fe-58c8-42f1-854a-ecd29ac29c9f] INFO 2022-04-16 10:47:17,270 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650106038.351153-a497385f-bd7a-4396-a3ce-44bd340d1384] INFO 2022-04-16 10:47:18,351 autoreload Watching for file changes with StatReloader
+[cid: 1650106038.597905-1def2ac7-d440-4791-86e6-9c9c2ccdc3a6] INFO 2022-04-16 10:47:42,390 runserver [mHTTP GET / 200 [0.02, 127.0.0.1:50004][0m
+[cid: 1650106038.597905-1def2ac7-d440-4791-86e6-9c9c2ccdc3a6] INFO 2022-04-16 10:47:42,414 runserver [36mHTTP GET /static/index.css 304 [0.01, 127.0.0.1:50004][0m
+[cid: 1650106038.351153-a497385f-bd7a-4396-a3ce-44bd340d1384] INFO 2022-04-16 10:49:48,454 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 2022-04-16 10:49:49.438742+00:00-6c7f0225-cd07-4fc3-a94f-ec9307f7b337] INFO 2022-04-16 10:49:49,438 autoreload Watching for file changes with StatReloader
+[cid: 2022-04-16 10:49:49.710987+00:00-e73cdab4-062f-4af0-89fd-160f7d801af4] INFO 2022-04-16 10:49:52,916 runserver [mHTTP GET / 200 [0.02, 127.0.0.1:50094][0m
+[cid: 2022-04-16 10:49:49.438742+00:00-6c7f0225-cd07-4fc3-a94f-ec9307f7b337] INFO 2022-04-16 10:50:37,719 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650106238.7636423-001382d2-664e-492e-b11b-5656c8e631ed] INFO 2022-04-16 10:50:38,763 autoreload Watching for file changes with StatReloader
+[cid: 1650106239.1188512-461dc513-0aa3-4e91-810d-14c835e424b9] INFO 2022-04-16 10:50:41,733 runserver [mHTTP GET / 200 [0.02, 127.0.0.1:50196][0m
+[cid: 1650106238.7636423-001382d2-664e-492e-b11b-5656c8e631ed] INFO 2022-04-16 10:53:39,933 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650106421.1579862-876ff03b-27c3-4c6f-9d84-7ec98cd2d04a] INFO 2022-04-16 10:53:41,157 autoreload Watching for file changes with StatReloader
+[cid: 1650106421.3379104-9a522271-609f-4b6b-85e4-630eff5c7979] INFO 2022-04-16 10:54:09,530 runserver [mHTTP GET / 200 [0.05, 127.0.0.1:50210][0m
+[cid: 1650106421.1579862-876ff03b-27c3-4c6f-9d84-7ec98cd2d04a] INFO 2022-04-16 11:02:12,214 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.
+[cid: 1650106933.2269332-00864a81-5412-4775-a0c5-49791fa91d88] INFO 2022-04-16 11:02:13,226 autoreload Watching for file changes with StatReloader
+[cid: 1650106933.2269332-00864a81-5412-4775-a0c5-49791fa91d88] INFO 2022-04-16 11:05:14,267 autoreload /home/eruck/projects/starters/django-api-starter/app/settings.py changed, reloading.

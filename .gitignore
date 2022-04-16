@@ -13,3 +13,7 @@ venv/
 # Media and static content
 media/
 static/
+
+# Logs
+logs/
+*.log

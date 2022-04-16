@@ -3,6 +3,12 @@ Django settings for app project.
 """
 from pathlib import Path
 import os
+import time
+from uuid import uuid4
+from django.utils import timezone
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from corsheaders.defaults import default_headers
 
 from decouple import config
@@ -34,6 +40,7 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'oauth2_provider',
+    'cid.apps.CidAppConfig',
 ]
 
 # Custom apps
@@ -48,8 +55,10 @@ INSTALLED_APPS += CUSTOM_APPS
 # AUTH MODEL
 AUTH_USER_MODEL = 'account.User'
 
-
 MIDDLEWARE = [
+    # Correlation ID middleware
+    'cid.middleware.CidMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 
@@ -76,6 +85,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cid.context_processors.cid_context_processor',
             ],
         },
     },
@@ -89,12 +99,14 @@ ASGI_APPLICATION = "app.asgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASE_ENGINES = {
-    "postgres": 'django.db.backends.postgresql'
+    "postgresql": 'cid.backends.postgresql',
+    "mysql": 'cid.backends.mysql',
+    "oracle": 'cid.backends.oracle'
 }
 
 DATABASES = {
     'default': {
-        'ENGINE': DATABASE_ENGINES.get(config('DB_ENGINE', default="postgres")),
+        'ENGINE': DATABASE_ENGINES.get(config('DB_ENGINE', default="postgresql")),
         'NAME': config('DB_NAME'),
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
@@ -104,15 +116,15 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         # 'oauth2_provider.contrib.rest_framework.permissions.TokenHasReadWriteScope',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-    ),
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50
 }
@@ -176,4 +188,60 @@ CHANNEL_LAYERS = {
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = list(default_headers) + []
 
+# Correlation ID settings
+CID_GENERATE = True
+CID_CONCATENATE_IDS = True
+CID_GENERATOR = lambda: f'{time.time()}-{str(uuid4())}'
+CID_HEADER = 'HTTP_X_CORRELATION_ID'
+CID_RESPONSE_HEADER = 'X-Correlation-Id'
 
+# LOGGING
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '[cid: %(cid)s] %(levelname)s %(asctime)s %(module)s %(message)s'
+        },
+        'simple': {
+            'format': '[cid: %(cid)s] %(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': config('LOG_LEVEL', default='INFO'),
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+            'filters': ['correlation'],
+        },
+        'file': {
+            'level': config('LOG_LEVEL', default='INFO'),
+            'class': 'logging.FileHandler',
+            'filename': config('LOG_FILE', 'general.log'),
+            'formatter': 'verbose',
+            'filters': ['correlation'],
+        },
+    },
+    'filters': {
+        'correlation': {
+            '()': 'cid.log.CidContextFilter'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'filters': ['correlation'],
+            'propagate': True,
+        },
+    },
+}
+
+
+# Sentry
+ENABLE_SENTRY_LOG = config('ENABLE_SENTRY_LOG', default=False, cast=bool)
+if ENABLE_SENTRY_LOG:
+    sentry_sdk.init(
+        dsn=config('SENTRY_DSN'),
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True,
+    )
