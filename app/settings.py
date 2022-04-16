@@ -240,7 +240,7 @@ LOGGING = {
 ENABLE_SENTRY_LOG = config('ENABLE_SENTRY_LOG', default=False, cast=bool)
 if ENABLE_SENTRY_LOG:
     sentry_sdk.init(
-        dsn=config('SENTRY_DSN'),
+        dsn=config('SENTRY_DSN', default=""),
         integrations=[DjangoIntegration()],
         traces_sample_rate=1.0,
         send_default_pii=True,
