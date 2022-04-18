@@ -205,6 +205,12 @@ LOGGING = {
         'simple': {
             'format': '[cid: %(cid)s] %(levelname)s %(message)s'
         },
+        'json': {
+            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(cid)s %(asctime)s %(created)f %(exc_info)s %(filename)s %(funcName)s %(levelname)s %('
+                      'levelno)s %(lineno)d %(module)s %(message)s %(pathname)s %(process)s %(processName)s %('
+                      'relativeCreated)d %(thread)s %(threadName)s '
+        }
     },
     'handlers': {
         'console': {
@@ -245,3 +251,32 @@ if ENABLE_SENTRY_LOG:
         traces_sample_rate=1.0,
         send_default_pii=True,
     )
+
+
+# Splunk Logging
+ENABLE_SPLUNK_LOGS = config('ENABLE_SPLUNK_LOGS', default=False, cast=bool)
+if ENABLE_SPLUNK_LOGS:
+    SPLUNK_LOGS = ENABLE_SPLUNK_LOGS
+    SPLUNK_HOST = config('SPLUNK_HOST', default='localhost')
+    SPLUNK_PORT = int(config('SPLUNK_PORT', default='8088'))
+    SPLUNK_TOKEN = config('SPLUNK_TOKEN', default='')
+    SPLUNK_INDEX = config('SPLUNK_INDEX', default='main')
+    SPLUNK_PROTOCOL = config('SPLUNK_PROTOCOL', default='http')
+    SPLUNK_VERIFY_SSL = config('SPLUNK_VERIFY_SSL', default=False)
+
+    splunk_log_handler = {
+            'level': 'DEBUG',
+            'class': 'splunk_handler.SplunkHandler',
+            'formatter': 'json',
+            'host': SPLUNK_HOST,
+            'port': SPLUNK_PORT,
+            'token': SPLUNK_TOKEN,
+            'index': SPLUNK_INDEX,
+            'protocol': SPLUNK_PROTOCOL,
+            'sourcetype': 'json',
+            'filters': ['correlation']
+    }
+
+    LOGGING['handlers']["splunk"] = splunk_log_handler
+
+    LOGGING['loggers']['django']['handlers'].append('splunk')
