@@ -14,6 +14,7 @@ from common.views import index
 urlpatterns = [
     path('', index),
     path('admin/', admin.site.urls),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 ]
 
 # Auto import urls from custom apps

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # Third party apps
     'rest_framework',
     'oauth2_provider',
-    'cid.apps.CidAppConfig',
+    'cid.apps.CidAppConfig'
 ]
 
 # Custom apps
@@ -58,6 +58,7 @@ AUTH_USER_MODEL = 'account.User'
 MIDDLEWARE = [
     # Correlation ID middleware
     'cid.middleware.CidMiddleware',
+    # 'request_logging.middleware.LoggingMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -200,24 +201,22 @@ LOGGING = {
     'version': 1,
     'formatters': {
         'verbose': {
-            'format': '[cid: %(cid)s] %(levelname)s %(asctime)s %(module)s %(message)s'
+            'format': '[cid: %(cid)s] %(levelname)s %(asctime)s %(request)s %(module)s  %(message)s'
         },
-        'simple': {
-            'format': '[cid: %(cid)s] %(levelname)s %(message)s'
+        'db_backend': {
+            'format': '[cid: %(cid)s] %(levelname)s %(asctime)s %(duration)s %(sql)s, %(params)s %(module)s  %(message)s'
         },
-        'json': {
-            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(cid)s %(asctime)s %(created)f %(exc_info)s %(filename)s %(funcName)s %(levelname)s %('
-                      'levelno)s %(lineno)d %(module)s %(message)s %(pathname)s %(process)s %(processName)s %('
-                      'relativeCreated)d %(thread)s %(threadName)s '
-        }
+        'request_format': {
+            '()': 'common.utils.log.RequestLogFormatter',
+            'format': '[APP_ID: %(app_id)s] [cid: %(cid)s] %(levelname)s %(asctime)s %(http_method)s %(username)s %(headers)s %(module)s  %(message)s'
+        },
     },
     'handlers': {
         'console': {
             'level': config('LOG_LEVEL', default='INFO'),
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-            'filters': ['correlation'],
+            'formatter': 'request_format',
+            'filters': ['correlation', 'request'],
         },
         'file': {
             'level': config('LOG_LEVEL', default='INFO'),
@@ -226,21 +225,37 @@ LOGGING = {
             'formatter': 'verbose',
             'filters': ['correlation'],
         },
+
     },
     'filters': {
         'correlation': {
             '()': 'cid.log.CidContextFilter'
         },
+        'request': {
+            '()': 'django_requestlogging.logging_filters.RequestFilter',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
-            'filters': ['correlation'],
-            'propagate': True,
+            'handlers': ['console'],
+            'filters': ['correlation', 'request'],
+            'propagate': False,
+            'level': 'INFO'
         },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'filters': ['correlation'],
+            'formatter': 'db_backend',
+            'propagate': True
+        }
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+        'filters': ['correlation', 'request'],
+        'formatter': 'request_format',
     },
 }
-
 
 # Sentry
 ENABLE_SENTRY_LOG = config('ENABLE_SENTRY_LOG', default=False, cast=bool)
@@ -252,31 +267,25 @@ if ENABLE_SENTRY_LOG:
         send_default_pii=True,
     )
 
-
-# Splunk Logging
-ENABLE_SPLUNK_LOGS = config('ENABLE_SPLUNK_LOGS', default=False, cast=bool)
-if ENABLE_SPLUNK_LOGS:
-    SPLUNK_LOGS = ENABLE_SPLUNK_LOGS
-    SPLUNK_HOST = config('SPLUNK_HOST', default='localhost')
-    SPLUNK_PORT = int(config('SPLUNK_PORT', default='8088'))
-    SPLUNK_TOKEN = config('SPLUNK_TOKEN', default='')
-    SPLUNK_INDEX = config('SPLUNK_INDEX', default='main')
-    SPLUNK_PROTOCOL = config('SPLUNK_PROTOCOL', default='http')
-    SPLUNK_VERIFY_SSL = config('SPLUNK_VERIFY_SSL', default=False)
-
-    splunk_log_handler = {
-            'level': 'DEBUG',
-            'class': 'splunk_handler.SplunkHandler',
-            'formatter': 'json',
-            'host': SPLUNK_HOST,
-            'port': SPLUNK_PORT,
-            'token': SPLUNK_TOKEN,
-            'index': SPLUNK_INDEX,
-            'protocol': SPLUNK_PROTOCOL,
-            'sourcetype': 'json',
-            'filters': ['correlation']
+# Graylog
+ENABLE_GRAYLOG = config('ENABLE_GRAYLOG', default=False, cast=bool)
+if ENABLE_GRAYLOG:
+    LOGGING['handlers']['graylog'] = {
+        'level': 'DEBUG',
+        'class': 'graypy.GELFHTTPHandler',
+        'host': config('GRAYLOG_SERVER_HOST', default='localhost'),
+        'port': config('GRAYLOG_SERVER_PORT', default=12201),
+        'formatter': 'request_format'
     }
+    LOGGING['root']['handlers'].append('graylog')
+    LOGGING['loggers']['django']['handlers'].append('graylog')
 
-    LOGGING['handlers']["splunk"] = splunk_log_handler
+# OIDC
 
-    LOGGING['loggers']['django']['handlers'].append('splunk')
+OAUTH2_PROVIDER = {
+    "OIDC_ENABLED": config('OIDC_ENABLED', default=True, cast=bool),
+    "OIDC_RSA_PRIVATE_KEY": config("OIDC_RSA_PRIVATE_KEY", default='NOT_SECURE_KEY'),
+    "SCOPES": {
+        "openid": "OpenID Connect scope",
+    },
+}
