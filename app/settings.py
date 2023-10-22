@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     # Third party apps
     'rest_framework',
+    'rest_framework.authtoken',
     'oauth2_provider',
     'cid.apps.CidAppConfig'
 ]

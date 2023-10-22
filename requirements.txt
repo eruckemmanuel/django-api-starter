@@ -19,6 +19,7 @@ django-cid==2.2
 django-cors-headers==3.11.0
 django-oauth-toolkit==1.7.1
 django-redis==5.2.0
+django-requestlogging==1.0.1
 django-splunk-logging==1.1.0
 djangorestframework==3.13.1
 hiredis==2.0.0
@@ -29,7 +30,6 @@ jwcrypto==1.0
 msgpack==1.0.3
 oauthlib==3.2.0
 packaging==21.3
-pkg_resources==0.0.0
 psycopg2-binary==2.9.3
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
